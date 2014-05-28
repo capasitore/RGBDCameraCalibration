@@ -6,7 +6,7 @@ May 26, 2014
 
 //	this program captures rgb/depth/ir frame from PrimeSense
 //	the resolution is 480x640 by default at 30 fps
-//	we use OpenGL to show the frame
+//	we use OpenCV to display and save the depth and color images
 
 #include <iostream>
 #include <sstream>

@@ -7,7 +7,7 @@ May 27, 2014
 #ifndef _PSV_NIHELPER_H_
 #define _PSV_NIHELPER_H_
 
-//	this defines some helper function in OpenNI
+//	this header file defines some helper function in OpenNI
 #include <string>
 
 //	OpenNI header file

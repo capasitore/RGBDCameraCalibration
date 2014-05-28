@@ -8,7 +8,7 @@ May 27, 2014
 #define _PSV_CVHELPER_H_
 
 //	this header file defines the visualization functions
-//	for the depth and rgb images
+//	for the depth and color images
 
 #include <string>
 
