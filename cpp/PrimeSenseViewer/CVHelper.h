@@ -17,18 +17,29 @@ May 27, 2014
 
 #include "NiHelper.h"
 
-//	use opencv to display the depth and color image
-//	together
+//	use opencv to display the depth and color images
 //	return the key pressed in waitKey()
-char showPrimeSenseImages(
+char showDepthColorImages(
 	const std::string windowName, 
 	const VideoFrameRef &depthFrame,
-	const VideoFrameRef &colorFrame);
+	const VideoFrameRef &colorFrame
+);
+
+//	use opencv to display the depth and ir images
+//	return the key pressed in waitKey()
+char showDepthIRImages(
+	const std::string windowName,
+	const VideoFrameRef &depthFrame,
+	const VideoFrameRef &irFrame
+);
 
 //	save depth images
 void saveDepthImage(const std::string name, const VideoFrameRef &depthFrame);
 
 //	save color images
 void saveColorImage(const std::string name, const VideoFrameRef &colorFrame);
+
+//	save ir images
+void saveIRImage(const std::string name, const VideoFrameRef &irFrame);
 
 #endif

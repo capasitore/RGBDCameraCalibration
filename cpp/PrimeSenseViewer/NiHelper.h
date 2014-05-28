@@ -22,4 +22,18 @@ void printVideoMode(const VideoMode &mode);
 //	report any runtime error from OpenNI
 void reportError(std::string errorMessage);
 
+//	depth and color mode
+void runDepthColorMode(const std::string folder,
+					   const std::string depthPrefix,
+					   const std::string colorPrefix,
+					   const std::string depthSuffix,
+					   const std::string colorSuffix);
+
+//	depth and ir mode
+void runDepthIRMode(const std::string folder,
+					   const std::string depthPrefix,
+					   const std::string irPrefix,
+					   const std::string depthSuffix,
+					   const std::string irSuffix);
+
 #endif

@@ -11,7 +11,7 @@ May 27, 2014
 #include <cassert>
 #include "CVHelper.h"
 
-char showPrimeSenseImages(
+char showDepthColorImages(
 	const std::string windowName, 
 	const VideoFrameRef &depthFrame,
 	const VideoFrameRef &colorFrame)
@@ -60,11 +60,73 @@ char showPrimeSenseImages(
 	}
 
 	//	show the image
-	cv::namedWindow(windowName, cv::WINDOW_AUTOSIZE);
 	cv::imshow(windowName, image);
 	//	wait for an input to terminate
 	char key = char(cv::waitKey(0));
-	cv::destroyWindow(windowName);
+	return key;
+}
+
+//	use opencv to display the depth and ir images
+//	return the key pressed in waitKey()
+char showDepthIRImages(
+	const std::string windowName,
+	const VideoFrameRef &depthFrame,
+	const VideoFrameRef &irFrame
+)
+{
+	//	get the height and width of the images
+	//	assume depthFrame and colorFrame has the same size
+	int height = depthFrame.getHeight();
+	int width = depthFrame.getWidth();
+	assert(height == irFrame.getHeight());
+	assert(width == irFrame.getWidth());
+
+	//	both depth pixel and ir pixel are in uint16
+	//	concatenate them together
+	cv::Mat image = cv::Mat::zeros(height, width * 2, CV_8UC3);
+	//	draw the depth image first
+	DepthPixel* pDepth = (DepthPixel *)depthFrame.getData();
+	int minDepth = 500;
+	int maxDepth = 2000;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			//	the depth is clampped into [minDepth, maxDepth)
+			int depth = int(*pDepth);
+			depth = depth >= minDepth ? depth : minDepth;
+			depth = depth < maxDepth ? depth : maxDepth - 1;
+			float grayScale = (depth - minDepth) * 256.f / (maxDepth - minDepth);
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)grayScale;
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)grayScale;
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)grayScale;
+			pDepth++;
+		}
+	}
+	//	draw the ir image
+	int minIR = 0;
+	int maxIR = 1500;
+	Grayscale16Pixel* pIR = (Grayscale16Pixel *)irFrame.getData();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = width; j < 2 * width; j++)
+		{
+			//	the ir is clampped into [minIR, maxIR)
+			int ir = int(*pIR);
+			ir = ir >= minIR ? ir : minIR;
+			ir = ir < maxIR ? ir : maxIR - 1;
+			float grayScale = (ir - minIR) * 256.f / (maxIR - minIR);
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)grayScale;
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)grayScale;
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)grayScale;
+			pIR++;
+		}
+	}
+
+	//	show the image
+	cv::imshow(windowName, image);
+	//	wait for an input to terminate
+	char key = char(cv::waitKey(0));
 	return key;
 }
 
@@ -102,6 +164,25 @@ void saveColorImage(const std::string name, const VideoFrameRef &colorFrame)
 			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)pColorInPixel[1];	//	g
 			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)pColorInPixel[0];	//	r
 			pColor++;
+		}
+	}
+	cv::imwrite(name, image);
+}
+
+//	save ir images
+void saveIRImage(const std::string name, const VideoFrameRef &irFrame)
+{
+	//	the same as saving the depth image
+	int height = irFrame.getHeight();
+	int width = irFrame.getWidth();
+	cv::Mat image = cv::Mat::zeros(height, width, CV_16UC1);
+	Grayscale16Pixel *pIR = (Grayscale16Pixel *)irFrame.getData();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			image.at<uint16_t>(i, j) = (uint16_t)(*pIR);
+			pIR++;
 		}
 	}
 	cv::imwrite(name, image);
