@@ -16,10 +16,14 @@ any other keys: continue to capture the next frame.
 In the console some real time information is provided to reflect the current status, or report an error if any.
 
 About each folder:
-/3rdparty: 3rd party libraries used in the project. 
-/Bin: the output .exe file.
-/Images: the default directory to store the captured depth and color images. Some sample images have been provided.
-/PrimeSenseViewer: the cpp code.
+
+**/3rdparty:** 3rd party libraries used in the project. 
+
+**/Bin:** the output .exe file.
+
+**/Images:** the default directory to store the captured depth and color images. Some sample images have been provided.
+
+**/PrimeSenseViewer:** the cpp code.
 
 ### Matlab part ###
 TODO
