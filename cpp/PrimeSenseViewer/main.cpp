@@ -9,63 +9,16 @@ May 26, 2014
 //	we use OpenGL to show the frame
 
 #include <iostream>
-#include <string>
-//	OpenNI header file
-#include "OpenNI.h"
 
-using namespace openni;
+#include "CVHelper.h"
+#include "NiHelper.h"
 
-#define  SAMPLE_READ_WAIT_TIMEOUT 2000
-
-void printVideoMode(const VideoMode &mode)
+void usage()
 {
-	std::cout << "xRes = " << mode.getResolutionX() << std::endl
-		<< "yRes = " << mode.getResolutionY() << std::endl;
-	std::cout << "Pixel = ";
-	switch (mode.getPixelFormat())
-	{
-	case PIXEL_FORMAT_DEPTH_1_MM:
-		std::cout << "DEPTH_1_MM" << std::endl;
-		break;
-	case PIXEL_FORMAT_DEPTH_100_UM:
-		std::cout << "DEPTH_100_UM" << std::endl;
-		break;
-	case PIXEL_FORMAT_SHIFT_9_2:
-		std::cout << "SHIFT_9_2" << std::endl;
-		break;
-	case PIXEL_FORMAT_SHIFT_9_3:
-		std::cout << "SHIFT_9_3" << std::endl;
-		break;
-	case PIXEL_FORMAT_RGB888:
-		std::cout << "RGB888" << std::endl;
-		break;
-	case PIXEL_FORMAT_YUV422:
-		std::cout << "YUV422" << std::endl;
-		break;
-	case PIXEL_FORMAT_GRAY8:
-		std::cout << "GRAY8" << std::endl;
-		break;
-	case PIXEL_FORMAT_GRAY16:
-		std::cout << "GRAY16" << std::endl;
-		break;
-	case PIXEL_FORMAT_JPEG:
-		std::cout << "JPEG" << std::endl;
-		break;
-	case PIXEL_FORMAT_YUYV:
-		std::cout << "YUYV" << std::endl;
-		break;
-	default:
-		std::cout << "unknown pixel format" << std::endl;
-		break;
-	}
-	std::cout << "fps = " << mode.getFps() << std::endl;
-}
-
-void reportError(std::string errorMessage)
-{
-	std::cout << errorMessage 
-		<< OpenNI::getExtendedError()
-		<< std::endl;
+	std::cout << "Usage: " <<  std::endl
+		<< "s: save" << std::endl
+		<< "e: exit" << std::endl
+		<< "any other key: new frame" << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -131,9 +84,9 @@ int main(int argc, char *argv[])
 			reportError("fail to create color stream: ");
 			return 0;
 		}
-		//	set depth resolution, mirror, registration
-		if (depth.getMirroringEnabled())
-			depth.setMirroringEnabled(false);
+		//	set color resolution, mirror
+		if (color.getMirroringEnabled())
+			color.setMirroringEnabled(false);
 		//	all the modes supported by the sensor
 		const SensorInfo* pSensorInfo = device.getSensorInfo(SENSOR_COLOR);
 		const openni::Array<VideoMode> &mode = pSensorInfo->getSupportedVideoModes();
@@ -146,7 +99,7 @@ int main(int argc, char *argv[])
 				&& pSupportedMode->getPixelFormat() == PIXEL_FORMAT_RGB888
 				&& pSupportedMode->getFps() == 30)
 			{
-				depth.setVideoMode(*pSupportedMode);
+				color.setVideoMode(*pSupportedMode);
 				settingSucceed = true;
 				break;
 			}
@@ -187,7 +140,72 @@ int main(int argc, char *argv[])
 		reportError("fail to start color stream: ");
 		return 0;
 	}
+	//	show the depth and color images
+	//	print the usage
+	usage();
+	bool isRunning = true;
+	VideoFrameRef depthFrame, colorFrame;
+	while (isRunning)
+	{
+		//	capture the depth frame
+		VideoStream* pDepthStream = &depth;
+		int changedStreamDummy;
+		//	wait for 2000ms
+		rc = OpenNI::waitForAnyStream(&pDepthStream, 1, &changedStreamDummy, 2000);
+		if (rc != STATUS_OK)
+		{
+			std::cout << "time out" << std::endl;
+			isRunning = false;
+			break;
+		}
+		rc = depth.readFrame(&depthFrame);
+		if (rc != STATUS_OK)
+		{
+			reportError("fail to read depth image: ");
+			isRunning = false;
+			break;
+		}
+		//	capture the color frame
+		VideoStream* pColorStream = &color;
+		rc = OpenNI::waitForAnyStream(&pColorStream, 1, &changedStreamDummy, 2000);
+		if (rc != STATUS_OK)
+		{
+			std::cout << "time out" << std::endl;
+			isRunning = false;
+			break;
+		}
+		rc = color.readFrame(&colorFrame);
+		if (rc != STATUS_OK)
+		{
+			reportError("fail to read color image: ");
+			isRunning = false;
+			break;
+		}
+		//	use opencv to show the image
+		showPrimeSenseImages("images", depthFrame, colorFrame);
 
+		char ch;
+		std::cin >> ch;
+		switch (ch)
+		{
+		case 'e':	//	exit
+			std::cout << "exit" << std::endl;
+			isRunning = false;
+			break;
+		case 's':	//	save the current frame
+			std::cout << "save the current image ..." << std::endl;
+			//	save the depth image
+
+			//	save the rgb image
+
+			std::cout << "done" << std::endl;
+			break;
+		default:	//	capture a new frame
+			//	do nothing
+			std::cout << "capture a new frame ..." << std::endl;
+			break;
+		}
+	}
 	//	stop the device
 	depth.stop();
 	depth.destroy();
@@ -196,6 +214,5 @@ int main(int argc, char *argv[])
 	//	close the device
 	device.close();
 	OpenNI::shutdown();
-
 	return 0;
 }
