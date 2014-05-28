@@ -9,6 +9,7 @@ May 26, 2014
 //	we use OpenGL to show the frame
 
 #include <iostream>
+#include <sstream>
 
 #include "CVHelper.h"
 #include "NiHelper.h"
@@ -23,6 +24,18 @@ void usage()
 
 int main(int argc, char *argv[])
 {
+	//	the folder to store depth and color image
+	//	name convention:
+	//	depth_0001.png
+	//	color_0001.bmp
+
+	//	change the string here if you want to save in other directories
+	const std::string folder = "../Images/";
+	const std::string depthPrefix = "depth_";
+	const std::string colorPrefix = "color_";
+	const std::string depthSuffix = ".png";
+	const std::string colorSuffix = ".bmp";
+
 	//	initialize the PrimeSense
 	Status rc = OpenNI::initialize();
 	if (rc != STATUS_OK)
@@ -145,6 +158,7 @@ int main(int argc, char *argv[])
 	usage();
 	bool isRunning = true;
 	VideoFrameRef depthFrame, colorFrame;
+	int imageId = 1;
 	while (isRunning)
 	{
 		//	capture the depth frame
@@ -182,28 +196,40 @@ int main(int argc, char *argv[])
 			break;
 		}
 		//	use opencv to show the image
-		showPrimeSenseImages("images", depthFrame, colorFrame);
+		char ch = showPrimeSenseImages("images", depthFrame, colorFrame);
 
-		char ch;
-		std::cin >> ch;
 		switch (ch)
 		{
 		case 'e':	//	exit
-			std::cout << "exit" << std::endl;
-			isRunning = false;
-			break;
+			{
+				std::cout << "exit" << std::endl;
+				isRunning = false;
+				break;
+			}
 		case 's':	//	save the current frame
-			std::cout << "save the current image ..." << std::endl;
-			//	save the depth image
-
-			//	save the rgb image
-
-			std::cout << "done" << std::endl;
-			break;
+			{
+				std::cout << "save the current image ..." << std::endl;
+				//	save the depth image
+				std::ostringstream numberString;
+				numberString.fill('0');
+				numberString.width(4);
+				numberString << imageId;
+				const std::string number = numberString.str();
+				const std::string depthImageName = folder + depthPrefix + number + depthSuffix;
+				saveDepthImage(depthImageName, depthFrame);
+				//	save the rgb image
+				const std::string colorImageName = folder + colorPrefix + number + colorSuffix;
+				saveColorImage(colorImageName, colorFrame);
+				imageId++;
+				std::cout << "done" << std::endl;
+				break;
+			}
 		default:	//	capture a new frame
-			//	do nothing
-			std::cout << "capture a new frame ..." << std::endl;
-			break;
+			{
+				//	do nothing
+				std::cout << "capture a new frame ..." << std::endl;
+				break;
+			}
 		}
 	}
 	//	stop the device

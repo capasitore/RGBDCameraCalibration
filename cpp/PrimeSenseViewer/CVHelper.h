@@ -19,9 +19,16 @@ May 27, 2014
 
 //	use opencv to display the depth and color image
 //	together
-void showPrimeSenseImages(
+//	return the key pressed in waitKey()
+char showPrimeSenseImages(
 	const std::string windowName, 
 	const VideoFrameRef &depthFrame,
 	const VideoFrameRef &colorFrame);
+
+//	save depth images
+void saveDepthImage(const std::string name, const VideoFrameRef &depthFrame);
+
+//	save color images
+void saveColorImage(const std::string name, const VideoFrameRef &colorFrame);
 
 #endif

@@ -7,7 +7,7 @@ May 27, 2014
 #include <cassert>
 #include "CVHelper.h"
 
-void showPrimeSenseImages(
+char showPrimeSenseImages(
 	const std::string windowName, 
 	const VideoFrameRef &depthFrame,
 	const VideoFrameRef &colorFrame)
@@ -59,6 +59,46 @@ void showPrimeSenseImages(
 	cv::namedWindow(windowName, cv::WINDOW_AUTOSIZE);
 	cv::imshow(windowName, image);
 	//	wait for an input to terminate
-	cv::waitKey(0);
+	char key = char(cv::waitKey(0));
 	cv::destroyWindow(windowName);
+	return key;
+}
+
+//	save depth images
+void saveDepthImage(const std::string name, const VideoFrameRef &depthFrame)
+{
+	int height = depthFrame.getHeight();
+	int width = depthFrame.getWidth();
+	cv::Mat image = cv::Mat::zeros(height, width, CV_16UC1);
+	DepthPixel *pDepth = (DepthPixel *)depthFrame.getData();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			image.at<uint16_t>(i, j) = (uint16_t)(*pDepth);
+			pDepth++;
+		}
+	}
+	cv::imwrite(name, image);
+}
+
+//	save color images
+void saveColorImage(const std::string name, const VideoFrameRef &colorFrame)
+{
+	int height = colorFrame.getHeight();
+	int width = colorFrame.getWidth();
+	cv::Mat image = cv::Mat::zeros(height, width, CV_8UC3);
+	RGB888Pixel* pColor = (RGB888Pixel *)colorFrame.getData();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			unsigned char* pColorInPixel = (unsigned char*)pColor;
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)pColorInPixel[2];	//	b
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)pColorInPixel[1];	//	g
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)pColorInPixel[0];	//	r
+			pColor++;
+		}
+	}
+	cv::imwrite(name, image);
 }
