@@ -35,6 +35,7 @@ May 26, 2014
 //	name convention:
 //	depth_0001.png
 //	color_0001.bmp
+//	ir_0001.png
 
 //	change the string here if you want to save in other directories
 //	or use other names
