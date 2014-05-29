@@ -37,4 +37,23 @@ About each folder:
 **/PrimeSenseViewer:** the cpp code.
 
 ### Matlab part ###
-TODO
+
+**Special thanks to Jean-Yves Bouguet for the [calibration toolbox](http://www.vision.caltech.edu/bouguetj/calib_doc/).** The [first](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example.html) and [fifth example](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example5.html) are extremely useful for this project, and I highly recommend them!
+
+Here is an overview of what we need to do in this part:
+
+**1. find a good DSLR camera!** If possible, set everything to the **manual** mode in your camera. **DO NOT USE** auto focus.
+
+**2. mount the PrimeSense and your DSLR together:** I found [DepthKit](http://www.rgbdtoolkit.com/index.html) very helpful. If you cannot mount them by yourself, DepthKit is a good option. The mount can be placed on a tripod too.
+
+**3. capture depth and color images:** We need to capture depth and color images from PrimeSense, and color images from DSLR. 
+
+**4. optimize the focal length:** use the depth information to further optimize the focal length of the color sensor in PrimeSense.
+
+**5. stereo calibration: ** Follow [the fifth example](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example5.html) in the calibration toolbox to calibrate the color sensor and DSLR.
+
+Please visit /matlab to find more details.
+
+**contact us**
+
+Till now calibrating RGBD camera system is still a quite tedious work for me. If you have better ideas, feel free to send an email to <taodu@stanford.edu> and tell us your comments!
