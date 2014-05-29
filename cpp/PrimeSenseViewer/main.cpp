@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	case 1:	//	depth + color mode
 		{
 			runDepthColorMode(folder, depthPrefix, colorPrefix,
-				depthSuffix, irSuffix);
+				depthSuffix, colorSuffix);
 			break;
 		}
 	case 2:	//	depth + ir mode
