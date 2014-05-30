@@ -6,21 +6,21 @@ In PrimeSense, there are three data streams: color stream, depth stream and ir s
 
 **Method A:** we first align the depth image to the color image in PrimeSense, which can be done by using OpenNI, then we calibrate the color sensor and the DSLR camera. In that case, the depth image will be transformed twice: from depth sensor to the color sensor, then from the color sensor to the DSLR.
 
-**Method B:** we could use the ir image to calibrate the ir sensor and the DSLR camera directly. Since the ir image and the depth image comes from the same sensor, in this case, the depth image will be transformed only once: from the ir sensor to the DSLR camera.
+**Method B:** we could use the ir image to calibrate the ir sensor and the DSLR camera directly. Since the ir image and the depth image come from the same sensor, in this case, the depth image will be transformed only once: from the ir sensor to the DSLR camera. However, the ir images are not standard RGB images, and therefore may be harder to process.
 
 We provide a tiny program to help capture depth/color and depth/ir images.
 
 ### configuration ###
 Microsoft Visual Studio 2012 + Matlab 2013b
 
-### C++ part ###
+### c++ part ###
 We provide a small program under /cpp to help capture depth/color or depth/ir images from the PrimeSense sensors. Please go to /PrimeSenseViewer and double click PrimeSenseViewer.sln, and build the project in Release & x64 mode. 
 
 The program is controlled by the keyboard. Once you see the display window, you can choose:
 
 'e': exit
 
-'s': save the current depth and color images. The images will be saved in /cpp/Images/. There are some sample images there for your reference.
+'s': save the current images. The images will be saved in /cpp/Images/. There are some sample images there for your reference.
 
 any other keys: continue to capture the next frame.
 
@@ -32,11 +32,11 @@ About each folder:
 
 **/Bin:** the output .exe file.
 
-**/Images:** the default directory to store the captured depth and color images. Some sample images have been provided.
+**/Images:** the default directory to store the captured images. Some sample images have been provided.
 
 **/PrimeSenseViewer:** the cpp code.
 
-### Matlab part ###
+### matlab part ###
 
 **Special thanks to Jean-Yves Bouguet for the [calibration toolbox](http://www.vision.caltech.edu/bouguetj/calib_doc/).** The [first](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example.html) and [fifth example](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example5.html) are extremely useful for this project, and I highly recommend them!
 
@@ -44,16 +44,16 @@ Here is an overview of what we need to do in this part:
 
 **1. find a good DSLR camera!** If possible, set everything to the **manual** mode in your camera. **DO NOT USE** auto focus.
 
-**2. mount the PrimeSense and your DSLR together:** I found [DepthKit](http://www.rgbdtoolkit.com/index.html) very helpful. If you cannot mount them by yourself, DepthKit is a good option. The mount can be placed on a tripod too.
+**2. mount the PrimeSense and your DSLR together:** I found [DepthKit](http://www.rgbdtoolkit.com/index.html) very helpful. If you cannot mount them by yourself, DepthKit is a good option. The mount can be placed on a tripod too. They also have a tutorial about how to calibrate the RGBD camera systems. 
 
 **3. capture depth and color images:** We need to capture depth and color images from PrimeSense, and color images from DSLR. 
 
-**4. optimize the focal length:** use the depth information to further optimize the focal length of the color sensor in PrimeSense.
+**4. optimize the focal length:** in some cases, if your PrimeSense does not provide very accurate registration between the depth and the color sensor, it might be necessary to optimize the focal length manually. We use golden section search to figure out the best focal length in the function opt\_primesense. Details are attached in \matlab\README.md
 
-**5. stereo calibration: ** Follow [the fifth example](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example5.html) in the calibration toolbox to calibrate the color sensor and DSLR.
+**5. stereo calibration:** Follow [the fifth example](http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/example5.html) in the calibration toolbox to calibrate the color sensor and DSLR.
 
 Please visit /matlab to find more details.
 
-**contact us**
+**contact me**
 
-Till now calibrating RGBD camera system is still a quite tedious work for me. If you have better ideas, feel free to send an email to <taodu@stanford.edu> and tell us your comments!
+Till now calibrating RGBD camera system is still a quite tedious task for me. If you have better ideas, feel free to send an email to <taodu@stanford.edu> and tell us your comments!
