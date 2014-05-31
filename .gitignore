@@ -1,0 +1,8 @@
+# for visual studio files
+*.tlog
+*.obj
+*.log
+*.pdb
+*.lastbuildstate
+*.sdf
+*.vcxproj.user
