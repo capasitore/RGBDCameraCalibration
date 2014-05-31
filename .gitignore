@@ -6,6 +6,8 @@
 *.lastbuildstate
 *.sdf
 *.vcxproj.user
+*.exe
+*.suo
 
 # images
 *.bmp
