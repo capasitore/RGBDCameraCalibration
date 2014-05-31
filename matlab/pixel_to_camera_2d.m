@@ -4,11 +4,6 @@
 
 %   compute the XXc for all the pixel in a height * width image
 %   z is a height * width matrix
-%   if retType = 0
-%       XXc is a height * width * 3 matrix
-%   else
-%       XXc is XXc2D
-%   for more information
 function [ XXc ] = pixel_to_camera_2d(z, fc, cc, kc, alpha_c )
 %   build Xp
 [height, width] = size(z);
