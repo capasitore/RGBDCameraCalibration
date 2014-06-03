@@ -11,6 +11,81 @@ May 27, 2014
 #include <cassert>
 #include "CVHelper.h"
 
+//	the colormap
+//	copied from matlab's jet colormap
+//	used to show depth and ir images
+
+#define COLOR_MAP_NUM		64
+#define COLOR_MAP_CHANNEL	3
+
+double colorMap[COLOR_MAP_NUM][COLOR_MAP_CHANNEL] = {
+	{0.000000, 0.000000, 0.562500},
+	{0.000000, 0.000000, 0.625000},
+	{0.000000, 0.000000, 0.687500},
+	{0.000000, 0.000000, 0.750000},
+	{0.000000, 0.000000, 0.812500},
+	{0.000000, 0.000000, 0.875000},
+	{0.000000, 0.000000, 0.937500},
+	{0.000000, 0.000000, 1.000000},
+	{0.000000, 0.062500, 1.000000},
+	{0.000000, 0.125000, 1.000000},
+	{0.000000, 0.187500, 1.000000},
+	{0.000000, 0.250000, 1.000000},
+	{0.000000, 0.312500, 1.000000},
+	{0.000000, 0.375000, 1.000000},
+	{0.000000, 0.437500, 1.000000},
+	{0.000000, 0.500000, 1.000000},
+	{0.000000, 0.562500, 1.000000},
+	{0.000000, 0.625000, 1.000000},
+	{0.000000, 0.687500, 1.000000},
+	{0.000000, 0.750000, 1.000000},
+	{0.000000, 0.812500, 1.000000},
+	{0.000000, 0.875000, 1.000000},
+	{0.000000, 0.937500, 1.000000},
+	{0.000000, 1.000000, 1.000000},
+	{0.062500, 1.000000, 0.937500},
+	{0.125000, 1.000000, 0.875000},
+	{0.187500, 1.000000, 0.812500},
+	{0.250000, 1.000000, 0.750000},
+	{0.312500, 1.000000, 0.687500},
+	{0.375000, 1.000000, 0.625000},
+	{0.437500, 1.000000, 0.562500},
+	{0.500000, 1.000000, 0.500000},
+	{0.562500, 1.000000, 0.437500},
+	{0.625000, 1.000000, 0.375000},
+	{0.687500, 1.000000, 0.312500},
+	{0.750000, 1.000000, 0.250000},
+	{0.812500, 1.000000, 0.187500},
+	{0.875000, 1.000000, 0.125000},
+	{0.937500, 1.000000, 0.062500},
+	{1.000000, 1.000000, 0.000000},
+	{1.000000, 0.937500, 0.000000},
+	{1.000000, 0.875000, 0.000000},
+	{1.000000, 0.812500, 0.000000},
+	{1.000000, 0.750000, 0.000000},
+	{1.000000, 0.687500, 0.000000},
+	{1.000000, 0.625000, 0.000000},
+	{1.000000, 0.562500, 0.000000},
+	{1.000000, 0.500000, 0.000000},
+	{1.000000, 0.437500, 0.000000},
+	{1.000000, 0.375000, 0.000000},
+	{1.000000, 0.312500, 0.000000},
+	{1.000000, 0.250000, 0.000000},
+	{1.000000, 0.187500, 0.000000},
+	{1.000000, 0.125000, 0.000000},
+	{1.000000, 0.062500, 0.000000},
+	{1.000000, 0.000000, 0.000000},
+	{0.937500, 0.000000, 0.000000},
+	{0.875000, 0.000000, 0.000000},
+	{0.812500, 0.000000, 0.000000},
+	{0.750000, 0.000000, 0.000000},
+	{0.687500, 0.000000, 0.000000},
+	{0.625000, 0.000000, 0.000000},
+	{0.562500, 0.000000, 0.000000},
+	{0.500000, 0.000000, 0.000000}
+};
+
+
 char showDepthColorImages(
 	const std::string windowName, 
 	const VideoFrameRef &depthFrame,
@@ -37,10 +112,10 @@ char showDepthColorImages(
 			int depth = int(*pDepth);
 			depth = depth >= minDepth ? depth : minDepth;
 			depth = depth < maxDepth ? depth : maxDepth - 1;
-			float grayScale = (depth - minDepth) * 256.f / (maxDepth - minDepth);
-			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)grayScale;
+			int colorMapId = int((depth - minDepth) * COLOR_MAP_NUM / (maxDepth - minDepth));
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)(colorMap[colorMapId][2] * 255.0);	//	b channel
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)(colorMap[colorMapId][1] * 255.0);	//	g channel
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)(colorMap[colorMapId][0] * 255.0);	//	r channel
 			pDepth++;
 		}
 	}
@@ -96,29 +171,42 @@ char showDepthIRImages(
 			int depth = int(*pDepth);
 			depth = depth >= minDepth ? depth : minDepth;
 			depth = depth < maxDepth ? depth : maxDepth - 1;
-			float grayScale = (depth - minDepth) * 256.f / (maxDepth - minDepth);
-			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)grayScale;
+			int colorMapId = int((depth - minDepth) * COLOR_MAP_NUM / (maxDepth - minDepth));
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)(colorMap[colorMapId][2] * 255.0);	//	b channel
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)(colorMap[colorMapId][1] * 255.0);	//	g channel
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)(colorMap[colorMapId][0] * 255.0);	//	r channel
 			pDepth++;
 		}
 	}
 	//	draw the ir image
-	int minIR = 0;
-	int maxIR = 1500;
 	Grayscale16Pixel* pIR = (Grayscale16Pixel *)irFrame.getData();
+	int minIR = INT_MAX;
+	int maxIR = INT_MIN;
+	//	find minimum and maximum IR
+	for (int i = 0; i < height; i++)
+		for (int j = 0; j < width; j++)
+		{
+			int ir = int(*pIR);
+			if (ir < minIR)
+				minIR = ir;
+			if (ir > maxIR)
+				maxIR = ir;
+			pIR++;
+		}
+	//	intentionally add maxIR by 1
+	//	this will avoid overflow in the following for loops
+	maxIR++;
+	//	reset pIR
+	pIR = (Grayscale16Pixel *)irFrame.getData();
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = width; j < 2 * width; j++)
 		{
-			//	the ir is clampped into [minIR, maxIR)
 			int ir = int(*pIR);
-			ir = ir >= minIR ? ir : minIR;
-			ir = ir < maxIR ? ir : maxIR - 1;
-			float grayScale = (ir - minIR) * 256.f / (maxIR - minIR);
-			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)grayScale;
-			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)grayScale;
+			int colorMapId = int((ir - minIR) * COLOR_MAP_NUM / (maxIR - minIR));
+			image.at<cv::Vec3b>(i, j)[0] = (unsigned char)(colorMap[colorMapId][2] * 255.0);	//	b channel
+			image.at<cv::Vec3b>(i, j)[1] = (unsigned char)(colorMap[colorMapId][1] * 255.0);	//	g channel
+			image.at<cv::Vec3b>(i, j)[2] = (unsigned char)(colorMap[colorMapId][0] * 255.0);	//	r channel
 			pIR++;
 		}
 	}

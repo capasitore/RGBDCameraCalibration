@@ -9,6 +9,9 @@ May 27, 2014
 #include "CVHelper.h"
 #include "NiHelper.h"
 
+//	wait time for each frame
+#define WAIT_TIME	4000
+
 //	print the video mode information
 void printVideoMode(const VideoMode &mode)
 {
@@ -199,7 +202,7 @@ void runDepthColorMode(const std::string folder,
 		VideoStream* pDepthStream = &depth;
 		int changedStreamDummy;
 		//	wait for 2000ms
-		rc = OpenNI::waitForAnyStream(&pDepthStream, 1, &changedStreamDummy, 2000);
+		rc = OpenNI::waitForAnyStream(&pDepthStream, 1, &changedStreamDummy, WAIT_TIME);
 		if (rc != STATUS_OK)
 		{
 			std::cout << "time out" << std::endl;
@@ -215,7 +218,7 @@ void runDepthColorMode(const std::string folder,
 		}
 		//	capture the color frame
 		VideoStream* pColorStream = &color;
-		rc = OpenNI::waitForAnyStream(&pColorStream, 1, &changedStreamDummy, 2000);
+		rc = OpenNI::waitForAnyStream(&pColorStream, 1, &changedStreamDummy, WAIT_TIME);
 		if (rc != STATUS_OK)
 		{
 			std::cout << "time out" << std::endl;
@@ -415,7 +418,7 @@ void runDepthIRMode(const std::string folder,
 		VideoStream* pDepthStream = &depth;
 		int changedStreamDummy;
 		//	wait for 2000ms
-		rc = OpenNI::waitForAnyStream(&pDepthStream, 1, &changedStreamDummy, 2000);
+		rc = OpenNI::waitForAnyStream(&pDepthStream, 1, &changedStreamDummy, WAIT_TIME);
 		if (rc != STATUS_OK)
 		{
 			std::cout << "time out" << std::endl;
@@ -431,7 +434,7 @@ void runDepthIRMode(const std::string folder,
 		}
 		//	capture the ir frame
 		VideoStream* pIRStream = &ir;
-		rc = OpenNI::waitForAnyStream(&pIRStream, 1, &changedStreamDummy, 2000);
+		rc = OpenNI::waitForAnyStream(&pIRStream, 1, &changedStreamDummy, WAIT_TIME);
 		if (rc != STATUS_OK)
 		{
 			std::cout << "time out" << std::endl;
