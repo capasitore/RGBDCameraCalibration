@@ -16,11 +16,15 @@ Microsoft Visual Studio 2012 + Matlab 2013b.
 About the depth sensor: you may need to do some modifications depending on the depth sensor and the operation system you use:
 
 If you are using PrimeSense, make sure you have commented line 28 in /cpp/Bin/OpenNI2/Drivers/PS1080.ini(the ; means starting a comment line in its ini file):
+
 ;UsbInterface=2
 
 If you are using Structure Sensor, please refer to [this line](http://com.occipital.openni.s3.amazonaws.com/Structure%20Sensor%20OpenNI2%20Quick%20Start%20Guide.pdf) for proper modifications on your PS1080.ini. Specifically, for windows user, you can change line 28 from 
+
 ;UsbInterface=2
+
 to
+
 UsbInterface=0
 
 ### c++ part ###
