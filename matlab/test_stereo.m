@@ -5,14 +5,18 @@
 %   test the calibration results
 %   run this function from the folder
 %   that contains the test images
-function [ ] = test_stereo( )
+%   the color images for PrimeSense should be either color_0001.bmp
+%   or ir_0001.bmp
+
+%   input image_prefix: 'color' or 'ir'
+function [ ] = test_stereo( image_prefix )
 %   load stereo calibration results
 load('../Calibration/Calib_Results_stereo.mat');
 %   get the number of scenes
 num = numel(dir('*.png'));
 for i = 1 : num
     %   load color image from the PrimeSense
-    image1 = imread(['color_', num2str(i, '%.4d'), '.bmp']);
+    image1 = imread([image_prefix, '_', num2str(i, '%.4d'), '.bmp']);
     %   load color image from the DSLR
     image2 = imread(['color_', num2str(i, '%.4d'), '.jpg']);
     %   load the depth image

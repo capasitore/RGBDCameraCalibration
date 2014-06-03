@@ -1,4 +1,8 @@
 % Cleaned-up version of init_calib.m
+%   Tao Du
+%   taodu@stanford.edu
+%   Jun 3, 2014
+%   modify the code so that it can be used to calib ir image
 
 fprintf(1,'\nProcessing image %d...\n',kk);
 
@@ -30,13 +34,29 @@ title(['Click on the four extreme corners of the rectangular pattern (first corn
 
 disp('Click on the four extreme corners of the rectangular complete pattern (the first clicked corner is the origin)...');
 
+%   added by Tao
+%   add another option to decide whether we need to run corner finder
+%   this should be disabled when we calib ir image
+%   because ir images are extremely unclear
+corner_finder_option = input('Do you want to disable corner finder(Higher recommended when labeling ir images)? ([] = disable): ');
+enable_corner_finder = 1;
+if isempty(corner_finder_option),
+    enable_corner_finder = 0;
+end;
+%   end
 x= [];y = [];
 figure(2); hold on;
 for count = 1:4,
     [xi,yi] = ginput4(1);
-    [xxi] = cornerfinder([xi;yi],I,winty,wintx);
-    xi = xxi(1);
-    yi = xxi(2);
+    %  added by Tao
+    if enable_corner_finder == 1
+    %  end
+        [xxi] = cornerfinder([xi;yi],I,winty,wintx);
+        xi = xxi(1);
+        yi = xxi(2);
+    %   added by Tao  
+    end
+    %   end
     figure(2);
     plot(xi,yi,'+','color',[ 1.000 0.314 0.510 ],'linewidth',2);
     plot(xi + [wintx+.5 -(wintx+.5) -(wintx+.5) wintx+.5 wintx+.5],yi + [winty+.5 winty+.5 -(winty+.5) -(winty+.5)  winty+.5],'-','color',[ 1.000 0.314 0.510 ],'linewidth',2);
@@ -51,12 +71,16 @@ hold off;
 
 
 %[x,y] = ginput4(4);
+%   added by Tao
+if enable_corner_finder == 1
+%   end    
+    [Xc,good,bad,type] = cornerfinder([x';y'],I,winty,wintx); % the four corners
 
-[Xc,good,bad,type] = cornerfinder([x';y'],I,winty,wintx); % the four corners
-
-x = Xc(1,:)';
-y = Xc(2,:)';
-
+    x = Xc(1,:)';
+    y = Xc(2,:)';
+%   added by Tao
+end
+%   end
 
 % Sort the corners:
 x_mean = mean(x);
