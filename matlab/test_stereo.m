@@ -13,7 +13,7 @@ function [ ] = test_stereo( image_prefix )
 %   load stereo calibration results
 load('../Calibration/Calib_Results_stereo.mat');
 %   get the number of scenes
-num = numel(dir('*.png'));
+num = numel(dir('depth_*.png'));
 for i = 1 : num
     %   load color image from the PrimeSense
     image1 = imread([image_prefix, '_', num2str(i, '%.4d'), '.bmp']);
