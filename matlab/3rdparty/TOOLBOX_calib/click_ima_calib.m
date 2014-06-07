@@ -265,9 +265,15 @@ end;
 Np = (n_sq_x+1)*(n_sq_y+1);
 
 disp('Corner extraction...');
-
-grid_pts = cornerfinder(XX,I,winty,wintx); %%% Finds the exact corners at every points!
-
+%   added by Tao
+if enable_corner_finder == 1
+%   end    
+    grid_pts = cornerfinder(XX,I,winty,wintx); %%% Finds the exact corners at every points!
+%   added by Tao
+else
+    grid_pts = XX;
+end
+%   end
 
 
 %save all_corners x y grid_pts

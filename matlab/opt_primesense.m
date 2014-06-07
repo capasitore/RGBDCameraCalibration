@@ -29,12 +29,18 @@ function [ fc ] = opt_primesense()
             Z_d(j) = D_cur(y, x);
         end
         eval(['Z_d', num2str(i), ' = Z_d;']);
+        %   plot the extracted corner depth information for this sample
+        %   picture
+        %   ideally, you should see a couple of parallel line segments in
+        %   the plot because the corners are uniformly distributed in the
+        %   chessboard, so there is a specific pattern for the depth
+        %   information
         plot(1:n_corners, Z_d, 'r+');
-        ch = input('do you want to use it? (n = no, other = yes):', 's');
-        if ch == 'n'
-            is_active(i) = 0;
-        else
+        option = input('do you want to use it? ([] = yes):', 's');
+        if isempty(option)
             is_active(i) = 1;
+        else
+            is_active(i) = 0;
         end
     end
 
@@ -81,6 +87,17 @@ function [ fc ] = opt_primesense()
         disp(iter);
     end
     comp_primesense_energy;
+    %   it will update the intrinsic parameters and store them in
+    %   Opt_Results.mat
     save('Opt_Results.mat', 'fc', 'cc', 'kc', 'alpha_c');
+    %   update Calib_Results_Left.mat
+    clear all;
+    load('calib_data_left.mat');
+    load('Calib_Results_Left.mat');
+    go_calib_optim;
+    load('Opt_Results.mat');
+    MaxIter = 0;
+    go_calib_optim;
+    saving_calib;
 end
 

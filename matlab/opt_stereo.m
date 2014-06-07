@@ -2,7 +2,10 @@
 %   taodu@stanford.edu
 %   May 29, 2014
 
-%   simple stereo optimization option
+%   stereo optimization option
+%   if Opt_Results.mat is found
+%   update Calib_Result_left.mat
+
 %   load stereo calibateion files
 load_stereo_calib_files;
 %   do not recompute the intrinsic parameters

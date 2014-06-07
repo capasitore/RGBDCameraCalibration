@@ -8,6 +8,7 @@
 
 %   update the extrinsic parameters
 for i = 1 : n_ima
+    %   if the image is inactive, ignore it
     if (~is_active(i))
         continue;
     end
@@ -21,6 +22,7 @@ end
 E_cur = 0;
 count = 0;
 for i = 1 : n_ima
+    %   if the image is inactive, ignore it
     if (~is_active(i))
         continue;
     end
@@ -38,10 +40,17 @@ for i = 1 : n_ima
     Z_ext(Z_logic) = [];
     E_cur = E_cur + (Z_dcur - Z_ext) * (Z_dcur - Z_ext)';
     count = count + length(Z_ext);
+    %   this is for visualization. You can comment out this plot line if
+    %   you don't like it!
+    %   Z_dcur represents the depth info from the PrimeSense
+    %   Z_ext represents the depth info from the calibration
+    %   and we want to adjust fc so that the difference between these two
+    %   are minimized
     plot(1:length(Z_ext), Z_dcur, 'r+',...
         1:length(Z_ext), Z_ext, 'g+');
 end
 %   for debugging use only
+%   you can safely comment out these disp lines
 disp('fc = ');
 disp(fc);
 disp('distance difference for each corner on average: ');

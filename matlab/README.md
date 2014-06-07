@@ -26,12 +26,16 @@ The next step is to calibrate the PrimeSense camera. Here you have two options:
 
 Finally, run **opt\_stereo** to do stereo calibration. This will save the stereo parameters in /matlab/Calibration.
 
+### optional optimization ###
+
 Note that all we have done only solves the stereo calibration problem, i.e., give the transformation between **the color/ir sensor** and the **DSLR camera**. Consider all the chessboard corners during the calibration: we have got two different depth information for each corner:
 
 **depth 1:** PrimeSense provides depth information about each pixel in the image, so given the pixel position of each corner, we can find its depth from the depth sensor.
 
 **depth 2:** during the calibration, we have got the extrinsic parameters for each image, and we know the position for each corner in the world coordinate. As a result, we can transform them back to the PrimeSense camera coordinate, and its z value is that corner's depth.
 
-When depth 1 and depth 2 differ more than 10mm, for example, then we are in trouble. From my experience, this means you can see obvious misalignment when you project depth image into the external DSLR camera frame. We are inclined to trust the depth information from the depth sensor in PrimeSense. As a result, we provide a script called opt\_primesense to adjust focal length in PrimeSense such that depth 2 and depth 1 are as close as possible. It uses golden section search to find the best focal length(More detailed explanation needed!).
+When depth 1 and depth 2 differ more than 10mm, for example, then we are in trouble. From my experience, this means you can see obvious misalignment when you project depth image into the external DSLR camera frame. We are inclined to trust the depth information from the depth sensor in PrimeSense. As a result, we provide a script called **opt\_primesense** to adjust focal length in PrimeSense such that depth 2 and depth 1 are as close as possible. It uses golden section search to find the best focal length. At the beginning it will plot all the depth information for the corners of the chessboard in each depth image. You can choose to use/not use any of these images. This function will help optimize the focal length depending on the depth images you select. The optimized data will be stored in Calib_Results.mat.
+
+### test ###
 
 Finally, you can **run test\_stereo** to decide whether the calibration results are accurate enough(If you capture data from the ir sensor, you will need to run **convert\_ir\_images** befor the test). You can pick feature points from PrimeSense's color/ir images, then the script will transform it to DSLR's coordinate and visualize the results. Generally speaking, if the uncertainty for rotation vector is around 0.00100, and the uncertainty for translation vector is around 1, you will be fine.
