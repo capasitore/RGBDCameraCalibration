@@ -14,3 +14,12 @@
 *.png
 *.jpg
 *.JPG
+
+# data files
+*.prb
+*.prc
+*.prsc
+
+# DSLR folder
+matlab/Calibration/DSLR/
+
